@@ -1,0 +1,109 @@
+{% extends "portfolio/base.html" %}
+
+{% block title %}{{ profile.full_name|default:'CV & Portfolio' }}{% endblock %}
+
+{% block content %}
+<div id="about" class="row align-items-center mb-5 hero py-5">
+    <div class="col-md-8">
+        <h1>{{ profile.full_name }}</h1>
+        <p class="lead">{{ profile.title }}</p>
+        <p>{{ profile.summary }}</p>
+        <p>
+            {% if profile.email %}<strong>Email:</strong> {{ profile.email }}<br>{% endif %}
+            {% if profile.phone %}<strong>Phone:</strong> {{ profile.phone }}<br>{% endif %}
+            {% if profile.location %}<strong>Location:</strong> {{ profile.location }}<br>{% endif %}
+        </p>
+        <p>
+            {% if profile.website %}<a href="{{ profile.website }}" target="_blank">Website</a>{% endif %}
+            {% if profile.linkedin %} | <a href="{{ profile.linkedin }}" target="_blank">LinkedIn</a>{% endif %}
+            {% if profile.github %} | <a href="{{ profile.github }}" target="_blank">GitHub</a>{% endif %}
+        </p>
+    </div>
+    {% if profile.avatar_url %}
+    <div class="col-md-4 text-center">
+        <img src="{{ profile.avatar_url }}" class="rounded-circle img-fluid" alt="Profile avatar" />
+    </div>
+    {% endif %}
+</div>
+
+{% if skills %}
+<section id="skills" class="mb-5">
+    <h2 class="section-title">Skills</h2>
+    <div class="row">
+        {% for skill in skills %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-3 h-100">
+                <h5>{{ skill.name }}</h5>
+                <p class="text-muted">{{ skill.level }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if experiences %}
+<section id="experience" class="mb-5">
+    <h2 class="section-title">Experience</h2>
+    {% for item in experiences %}
+    <div class="mb-3">
+        <h5>{{ item.title }} <span class="text-muted">@ {{ item.company }}</span></h5>
+        <p class="mb-1 text-muted">{{ item.start_date }} — {{ item.end_date|default:'Present' }}</p>
+        <p>{{ item.description }}</p>
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+
+{% if education %}
+<section id="education" class="mb-5">
+    <h2 class="section-title">Education</h2>
+    {% for item in education %}
+    <div class="mb-3">
+        <h5>{{ item.degree }} <span class="text-muted">@ {{ item.institution }}</span></h5>
+        <p class="mb-1 text-muted">{{ item.start_date }} — {{ item.end_date|default:'Present' }}</p>
+        <p>{{ item.description }}</p>
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+
+{% if projects %}
+<section id="projects" class="mb-5">
+    <h2 class="section-title">Projects</h2>
+    <div class="row">
+        {% for project in projects %}
+        <div class="col-md-4 mb-4">
+            <div class="card project-card h-100">
+                {% if project.image_url %}
+                <img src="{{ project.image_url }}" class="card-img-top" alt="{{ project.title }}" />
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text">{{ project.description|truncatechars:120 }}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'project_detail' project.pk %}" class="btn btn-primary btn-sm">View project</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section id="contact" class="mb-5">
+    <h2 class="section-title">Contact</h2>
+    <p>Use the contact page or submit a request through the contact form below to reach out.</p>
+    <form method="post" action="{% url 'contact' %}">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">{{ form.name.label_tag }}{{ form.name }}</div>
+            <div class="col-md-6">{{ form.email.label_tag }}{{ form.email }}</div>
+            <div class="col-12">{{ form.subject.label_tag }}{{ form.subject }}</div>
+            <div class="col-12">{{ form.message.label_tag }}{{ form.message }}</div>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Send message</button>
+    </form>
+</section>
+{% endblock %}
